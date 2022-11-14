@@ -29,5 +29,15 @@ describe('/api/topics', () => {
                 });
             });
         });
+    });
+    describe('Error handling', () => {
+        test('Error 404: responds with error message', () => {
+            return request(app)
+            .get('/api/topicff')
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Not Found')
+            })
+        });
     });  
 });

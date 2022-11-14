@@ -5,6 +5,6 @@ exports.fetchTopics = () => {
     SELECT * FROM topics;`
     )
     .then((res) => {
-        return res.rows;
+      return res.rows;
       });
 }
