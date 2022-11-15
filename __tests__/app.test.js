@@ -107,7 +107,6 @@ describe('/api/articles/:article_Id', () => {
             .get('/api/articles/12345')
             .expect(404)
             .then( (res) => {
-                //console.log(res.body)
                 expect(res.body.msg).toBe('That article does not exist')
             })
         });
@@ -120,4 +119,48 @@ describe('/api/articles/:article_Id', () => {
             })
         });
     });  
+});
+
+describe('/api/articles/:article_id/comments', () => {
+    describe('Functionality', () => {
+        test('GET 200: responds with an array of comment objects, with date sorted in descending order', () => {
+            return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then( (res) => {
+                expect(res.body.comments).toEqual(expect.any(Array))
+                expect(res.body.comments).toBeSortedBy('created_at', {ascending: true})
+                res.body.comments.forEach( (comment) => {
+                    expect(comment).toMatchObject({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                    });
+                });
+            });
+        });
+    });
+
+    describe('Error handling', () => {
+        test('Error 404: responds with error message when article Id doesnt exist', () => {
+            return request(app)
+            .get('/api/articles/12345/comments')
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('That article does not exist')
+            })
+        });
+        test('Error 404: responds with error message when article Id is not a number', () => {
+            return request(app)
+            .get('/api/articles/article/comments')
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+    });  
+
+    
 });

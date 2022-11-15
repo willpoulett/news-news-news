@@ -1,10 +1,11 @@
 const express = require("express")
-const {getTopics, getArticles, getArticleById} = require('./controllers/news_site.js')
+const {getTopics, getArticles, getArticleById, getCommentsByArticleId} = require('./controllers/news_site.js')
 const app = express()
 app.get('/api/topics',getTopics)
 
 app.get('/api/articles',getArticles)
 app.get('/api/articles/:articleId', getArticleById)
+app.get('/api/articles/:articleId/comments', getCommentsByArticleId)
 
 app.use((err,req,res,next) => {
     if (err.status === 404){
@@ -16,7 +17,6 @@ app.use((err,req,res,next) => {
 
   app.use((err,req,res,next) => {
     if (err.code === '22P02'){
-        console.log(err.error)
       res.status(404).send({msg:'Invalid input syntax'})
     } else {
         next(err)
@@ -28,7 +28,6 @@ app.all('/*', (req,res) => {
 })
   
 app.use((err, req, res, next) => {
-    console.log(err)
     res.sendStatus(500)
 })
 module.exports = app
