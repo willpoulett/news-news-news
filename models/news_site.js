@@ -37,11 +37,6 @@ exports.fetchArticles = () => {
 }
 
 exports.fetchArticleById = (article_id) => {
-  // console.log(typeof parseInt(article_id))
-  // console.log(article_id, Number.isInteger(article_id))
-  // if (!Number.isInteger(article_id)) {
-  //   return Promise.reject({status:404,msg:'Article ID can only be an integer'})
-  // }
   return db
       .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
       .then((result) => {
@@ -49,4 +44,14 @@ exports.fetchArticleById = (article_id) => {
           return Promise.reject({status:404,msg:'That article does not exist'})
         }
           return result.rows[0]})
+};
+
+exports.fetchCommentsByArticleId = (article_id) => {
+  return db
+      .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at ASC;`, [article_id])
+      .then((result) => {
+        if (result.rows.length === 0){
+          return Promise.reject({status:404,msg:'That article does not exist'})
+        }
+          return result.rows})
 };
