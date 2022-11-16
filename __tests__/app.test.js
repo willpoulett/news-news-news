@@ -110,10 +110,10 @@ describe('/api/articles/:article_Id', () => {
                 expect(res.body.msg).toBe('That article does not exist')
             })
         });
-        test('Error 404: responds with error message when article Id is not a number', () => {
+        test('Error 400: responds with error message when article Id is not a number', () => {
             return request(app)
             .get('/api/articles/article')
-            .expect(404)
+            .expect(400)
             .then( (res) => {
                 expect(res.body.msg).toBe('Invalid input syntax')
             })
@@ -129,7 +129,7 @@ describe('/api/articles/:article_id/comments', () => {
             .expect(200)
             .then( (res) => {
                 expect(res.body.comments).toEqual(expect.any(Array))
-                expect(res.body.comments).toBeSortedBy('created_at', {ascending: true})
+                expect(res.body.comments).toBeSortedBy('created_at', {descending: true})
                 res.body.comments.forEach( (comment) => {
                     expect(comment).toMatchObject({
                         comment_id: expect.any(Number),
@@ -147,20 +147,95 @@ describe('/api/articles/:article_id/comments', () => {
         test('Error 404: responds with error message when article Id doesnt exist', () => {
             return request(app)
             .get('/api/articles/12345/comments')
-            .expect(404)
+            //.expect(404)
             .then( (res) => {
                 expect(res.body.msg).toBe('That article does not exist')
             })
         });
-        test('Error 404: responds with error message when article Id is not a number', () => {
+        test('Error 400: responds with error message when article Id is not a number', () => {
             return request(app)
             .get('/api/articles/article/comments')
-            .expect(404)
+            .expect(400)
             .then( (res) => {
                 expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+        test('responds with empty array when no comments exist', () => {
+            return request(app)
+            .get('/api/articles/2/comments')
+            .expect(200)
+            .then( (res) => {
+                expect(res.body).toEqual({comments: []})
             })
         });
     });  
 
     
 });
+
+describe('/api/articles/:article_id/comments', () => {
+    describe('Functionality', () => {
+        test('POST 201: post a new comment', () => {
+            const newReview = {
+                username: "butter_bridge",
+                body: "this is a review for article 1"
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newReview)
+            .expect(201)
+            .then( (result) => {
+                expect(result.body.comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: 0,
+                    created_at: expect.any(String),
+                    author: "butter_bridge",
+                    body: "this is a review for article 1",
+                    article_id: 1
+                })
+            })
+        });  
+    });
+    describe('Error handling', () => {
+        test('Error 401: responds with error message when user doesnt exist', () => {
+            const newReview = {
+                username: "user1",
+                body: "this is a review for article 1"
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newReview)
+            .expect(401)
+            .then( (res) => {
+                expect(res.body.msg).toBe('User does not exist')
+            })
+        });
+        test('Error 404: responds with error message when article Id doesnt exist', () => {
+            const newReview = {
+                username: "butter_bridge",
+                body: "this is a review for article 12345"
+            }
+            return request(app)
+            .post('/api/articles/12345/comments')
+            .send(newReview)
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('That article does not exist')
+            })
+        });
+        test('Error 400: responds with error message when article Id is not a number', () => {
+            const newReview = {
+                username: "butter_bridge",
+                body: "this is a review for article 'string'"
+            }
+            return request(app)
+            .post('/api/articles/string/comments')
+            .send(newReview)
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+    });  
+});
+
