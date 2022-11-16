@@ -1,4 +1,5 @@
 const db = require('../db/connection.js');
+const {articleIsReal, userExists} = require('../utility-funtions.js')
 
 exports.fetchTopics = () => {
     return db.query(`
@@ -52,11 +53,8 @@ exports.fetchCommentsByArticleId = (article_id) => {
     return db
       .query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`, [article_id])
       .then((result) => {
-        
-        //console.log(result)
         if (result.rows.length === 0){
           return ([])
-          //return Promise.reject({status:404,msg:'That article does not exist'})
         }
           return result.rows})
     });
@@ -64,6 +62,9 @@ exports.fetchCommentsByArticleId = (article_id) => {
 
   exports.insertComment = (newComment, article_id) => {
     const { username, body} = newComment;
+    if ( typeof username !== 'string' || typeof body !== 'string' ){
+      return Promise.reject({status:400,msg:'Invalid input syntax'})
+    }
     return userExists(username)
     .then( () => {
       return articleIsReal(article_id)
@@ -92,22 +93,22 @@ exports.fetchCommentsByArticleId = (article_id) => {
   // ______________________________________________________
   
 
-  const articleIsReal = async (article_id) => {
-    return db
-      .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
-      .then((queryOutput) => {
-        if (queryOutput.rows.length === 0) {
-          return Promise.reject({ status: 404, msg: "That article does not exist" });
-        }
-      });
-  };
+  // const articleIsReal = async (article_id) => {
+  //   return db
+  //     .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
+  //     .then((queryOutput) => {
+  //       if (queryOutput.rows.length === 0) {
+  //         return Promise.reject({ status: 404, msg: "That article does not exist" });
+  //       }
+  //     });
+  // };
 
-  const userExists = async (username) => {
-    return db
-      .query(`SELECT * FROM users WHERE username = $1`, [username])
-      .then((queryOutput) => {
-        if (queryOutput.rows.length === 0) {
-          return Promise.reject({ status: 401, msg: "User does not exist" });
-        }
-      });
-  };
+  // const userExists = async (username) => {
+  //   return db
+  //     .query(`SELECT * FROM users WHERE username = $1`, [username])
+  //     .then((queryOutput) => {
+  //       if (queryOutput.rows.length === 0) {
+  //         return Promise.reject({ status: 401, msg: "User does not exist" });
+  //       }
+  //     });
+  // };

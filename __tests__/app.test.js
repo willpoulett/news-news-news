@@ -236,6 +236,19 @@ describe('/api/articles/:article_id/comments', () => {
                 expect(res.body.msg).toBe('Invalid input syntax')
             })
         });
+        test('Error 400: responds with error message when body has undefinded and null fields', () => {
+            const newReview = {
+                username: undefined,
+                body: null
+            }
+            return request(app)
+            .post('/api/articles/1/comments')
+            .send(newReview)
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
     });  
 });
 
