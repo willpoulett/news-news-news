@@ -1,5 +1,5 @@
 const db = require('../db/connection.js');
-const {articleIsReal, userExists} = require('../utility-funtions.js')
+const {articleIsReal, userExists, topicExists} = require('../utility-funtions.js')
 
 exports.fetchTopics = () => {
     return db.query(`
@@ -10,9 +10,20 @@ exports.fetchTopics = () => {
       });
 }
 
-exports.fetchArticles = () => {
-  return db.query(`
-  SELECT articles.author,
+exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
+  
+  const validColumns= ['title','votes','topic','author','body','created_at']
+  const validOrders = ['ASC','DESC']
+  const queryValues = []
+
+  if (!validColumns.includes(sort_by)){
+      return Promise.reject({status: 400, msg: 'Invalid input syntax'})
+  } else if (!validOrders.includes(order)) {
+      return Promise.reject({status: 400, msg: 'Invalid input syntax'})
+  }
+
+
+  let query = `SELECT articles.author,
   articles.title,
   articles.article_id,
   articles.topic,
@@ -22,17 +33,25 @@ exports.fetchArticles = () => {
   FROM articles
   JOIN comments
   ON articles.article_id = comments.article_id
-  GROUP By articles.author,
+  `
+
+  if (topic){
+      query += ` WHERE topic = $1`
+      queryValues.push(topic)
+  }
+  query += `GROUP By articles.author,
   articles.title,
   articles.article_id,
   articles.topic,
   articles.created_at,
   articles.votes
-  ORDER BY articles.created_at DESC
-  ;
-`
-  )
+  ORDER BY articles.${sort_by} ${order};`
+
+  return db.query(query, queryValues)
   .then((res) => {
+    if (res.rows.length === 0){
+      return []
+    }
     return res.rows;
     });
 }

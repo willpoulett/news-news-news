@@ -20,3 +20,14 @@ exports.userExists = async (username) => {
         }
       });
   };
+
+  exports.topicExists = async (topic) => {
+    return db
+      .query(`SELECT * FROM topics WHERE topic = $1`, [topic])
+      .then((queryOutput) => {
+        if (queryOutput.rows.length === 0) {
+          console.log('it doesnt exist')
+          return Promise.reject({ status: 404, msg: "Topic does not exist" });
+        }
+      });
+  };

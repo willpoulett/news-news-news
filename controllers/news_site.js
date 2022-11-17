@@ -6,12 +6,14 @@ exports.getTopics = (req, res, next) => {
         res.status(200).send({topics: topics})
     })
     .catch((err) => {
+        console.log(err)
         next(err);
     })
 };
 
 exports.getArticles = (req, res, next) => {
-    fetchArticles()
+    const {sort_by,order,topic} = req.query
+    fetchArticles(sort_by,order,topic)
     .then((articles) => {
         res.status(200).send({articles: articles})
     })

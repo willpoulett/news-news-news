@@ -38,6 +38,14 @@ app.use((err,req,res,next) => {
     }
   })
 
+  app.use((err,req,res,next) => {
+    if (err.code === '42703' || err.status === 404){
+      res.status(400).send({msg:'Topic does not exist'})
+    } else {
+        next(err)
+    }
+  })
+
 app.all('/*', (req,res) => {
     res.status(404).send({msg:'Not Found'})
 })
