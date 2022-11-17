@@ -1,5 +1,5 @@
 const express = require("express")
-const {getTopics, getArticles, getArticleById, getCommentsByArticleId, postComment, patchArticleById, getUsers} = require('./controllers/news_site.js')
+const {getTopics, getArticles, getArticleById, getCommentsByArticleId, postComment, patchArticleById, getUsers, deleteComment} = require('./controllers/news_site.js')
 const app = express()
 
 app.use(express.json());
@@ -13,6 +13,8 @@ app.get('/api/articles/:articleId/comments', getCommentsByArticleId)
 app.post('/api/articles/:articleId/comments', postComment)
 
 app.patch('/api/articles/:articleId', patchArticleById)
+
+app.delete('/api/comments/:comment_id', deleteComment)
 
 app.use((err,req,res,next) => {
     if (err.status === 404){

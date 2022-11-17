@@ -1,6 +1,1 @@
 You are now connected to database "nc_news_test" as user "srvadmin".
- article_id |                title                | topic |    author     |               body                | comment_count 
-------------+-------------------------------------+-------+---------------+-----------------------------------+---------------
-          1 | Living in the shadow of a great man | mitch | butter_bridge | I find this existence challenging |            12
-(1 row)
-
