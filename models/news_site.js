@@ -102,3 +102,12 @@ exports.changeArticleById = (article_id, body) => {
   })
   
 }
+
+exports.fetchUsers= () => {
+  return db.query(`
+  SELECT * FROM users;`
+  )
+  .then((res) => {
+    return res.rows;
+    });
+}
