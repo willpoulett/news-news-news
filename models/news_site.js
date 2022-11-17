@@ -50,7 +50,7 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
   return db.query(query, queryValues)
   .then((res) => {
     if (res.rows.length === 0){
-      return []
+      return Promise.reject({status: 404, msg: 'Article does not exist'})
     }
     return res.rows;
     });

@@ -360,7 +360,6 @@ describe('/api/articles', () => {
         .get('/api/articles?topic=cats')
         .expect(200)
             .then( (res) => {
-                expect(res.body.articles).toEqual(expect.any(Array))
                 res.body.articles.forEach( (article) => {
                     expect(article).toMatchObject({
                         author: expect.any(String),
@@ -380,7 +379,6 @@ describe('/api/articles', () => {
         .get('/api/articles?topic=cats&sort_by=votes')
         .expect(200)
             .then( (res) => {
-                expect(res.body.articles).toEqual(expect.any(Array))
                 expect(res.body.articles).toBeSortedBy('votes', {descending: true})
                 res.body.articles.forEach( (article) => {
                     expect(article).toMatchObject({
@@ -490,9 +488,9 @@ describe('/api/articles', () => {
         test('should return [] given invalid topic', () => {
             return request(app)
             .get('/api/articles?topic=somethingBad')
-            .expect(200)
+            .expect(404)
             .then( (res) => {
-                expect(res.body).toEqual({"articles": []})
+                expect(res.body.msg).toBe('Article does not exist')
             })
         })
 
