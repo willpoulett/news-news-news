@@ -333,3 +333,34 @@ describe('/api/articles/:articleId', () => {
     });
 });
 
+describe('/api/users', () => {
+    describe('Functionality', () => {
+        test('GET 200: responds with an array of user objects', () => {
+            return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then( (res) => {
+                expect(res.body.users).toEqual(expect.any(Array))
+                res.body.users.forEach( (user) => {
+                    expect(user).toMatchObject({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String),
+                    });
+                });
+            });
+        });
+    });
+
+    describe('Error handling', () => {
+        test('Error 404: responds with error message', () => {
+            return request(app)
+            .get('/api/userss')
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Not Found')
+            })
+        });
+    });  
+});
+
