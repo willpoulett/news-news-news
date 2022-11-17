@@ -313,6 +313,16 @@ describe('/api/articles/:articleId', () => {
         test('Error 400: responds with error message when vote increase body is not a number', () => {
             const voteIncrease = {inc_votes: 'string'}
             return request(app)
+            .patch('/api/articles/1')
+            .send(voteIncrease)
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+        test('Error 400: responds with error message when vote increase body is empty', () => {
+            const voteIncrease = {}
+            return request(app)
             .patch('/api/articles/qwerty')
             .send(voteIncrease)
             .expect(400)
