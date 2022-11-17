@@ -4,14 +4,14 @@ const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed.js');
 const testData = require('../db/data/test-data')
 
+afterAll(() => {
+    return db.end()
+})
 
 beforeAll(() => {
     return seed(testData);
 })
 
-afterAll(() => {
-    return db.end()
-})
 
 describe('/api/topics', () => {
     describe('Functionality', () => {
@@ -197,7 +197,7 @@ describe('/api/articles/:article_id/comments', () => {
         });  
     });
     describe('Error handling', () => {
-        test('Error 401: responds with error message when user doesnt exist', () => {
+        test('Error 404: responds with error message when user doesnt exist', () => {
             const newReview = {
                 username: "user1",
                 body: "this is a review for article 1"
@@ -205,7 +205,7 @@ describe('/api/articles/:article_id/comments', () => {
             return request(app)
             .post('/api/articles/1/comments')
             .send(newReview)
-            .expect(401)
+            .expect(404)
             .then( (res) => {
                 expect(res.body.msg).toBe('User does not exist')
             })
@@ -250,5 +250,86 @@ describe('/api/articles/:article_id/comments', () => {
             })
         });
     });  
+});
+
+describe('/api/articles/:articleId', () => {
+    describe('Functionality', () => {
+        test('PATCH - 202: respond with updated vote count - positive increase', () => {
+            const voteIncrease = {inc_votes: 100}
+            return request(app)
+            .patch('/api/articles/1')
+            .send(voteIncrease)
+            .expect(202)
+            .then ((res) => {
+                expect(res.body.article).toMatchObject({
+                    article_id: 1,
+                    title: 'Living in the shadow of a great man',
+                    topic: 'mitch',
+                    author: 'butter_bridge',
+                    body: 'I find this existence challenging',
+                    created_at: '2020-07-09T20:11:00.000Z',
+                    votes: 200
+                })
+            })
+        });
+        test('PATCH - 202: respond with updated vote count - negative increase', () => {
+            const voteIncrease = {inc_votes: -250}
+            return request(app)
+            .patch('/api/articles/1')
+            .send(voteIncrease)
+            .expect(202)
+            .then ((res) => {
+                expect(res.body.article).toMatchObject({
+                    article_id: 1,
+                    title: 'Living in the shadow of a great man',
+                    topic: 'mitch',
+                    author: 'butter_bridge',
+                    body: 'I find this existence challenging',
+                    created_at: '2020-07-09T20:11:00.000Z',
+                    votes: -50
+                })
+            })
+        });
+        test('Error 404: responds with error message when article Id doesnt exist', () => {
+            const voteIncrease = {inc_votes: -250}
+            return request(app)
+            .patch('/api/articles/1234')
+            .send(voteIncrease)
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('That article does not exist')
+            })
+        });
+        test('Error 400: responds with error message when article Id is not a number', () => {
+            const voteIncrease = {inc_votes: -250}
+            return request(app)
+            .patch('/api/articles/qwerty')
+            .send(voteIncrease)
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+        test('Error 400: responds with error message when vote increase body is not a number', () => {
+            const voteIncrease = {inc_votes: 'string'}
+            return request(app)
+            .patch('/api/articles/1')
+            .send(voteIncrease)
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+        test('Error 400: responds with error message when vote increase body is empty', () => {
+            const voteIncrease = {}
+            return request(app)
+            .patch('/api/articles/qwerty')
+            .send(voteIncrease)
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        });
+    });
 });
 
