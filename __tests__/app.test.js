@@ -350,17 +350,148 @@ describe('/api/users', () => {
                 });
             });
         });
-    });
-
-    describe('Error handling', () => {
-        test('Error 404: responds with error message', () => {
-            return request(app)
-            .get('/api/userss')
-            .expect(404)
-            .then( (res) => {
-                expect(res.body.msg).toBe('Not Found')
-            })
-        });
-    });  
+    }); 
 });
 
+describe('/api/articles', () => {
+
+    test('should filter by a topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+            .then( (res) => {
+                res.body.articles.forEach( (article) => {
+                    expect(article).toMatchObject({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: 'cats',
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+        })
+    
+    test('should sort by a numerical topic, order by default descending', () => {
+        return request(app)
+        .get('/api/articles?topic=cats&sort_by=votes')
+        .expect(200)
+            .then( (res) => {
+                expect(res.body.articles).toBeSortedBy('votes', {descending: true})
+                res.body.articles.forEach( (article) => {
+                    expect(article).toMatchObject({
+                    author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: 'cats',
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+        })
+
+        test('should sort by a alphabetical topic, order by default descending', () => {
+            return request(app)
+            .get('/api/articles?sort_by=title')
+            .expect(200)
+                .then( (res) => {
+                    expect(res.body.articles).toEqual(expect.any(Array))
+                    expect(res.body.articles).toBeSortedBy('title', {descending: true})
+                    res.body.articles.forEach( (article) => {
+                        expect(article).toMatchObject({
+                        author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number),
+                        });
+                    });
+                });
+            })
+            
+    test('should sort by a topic, and order ascending', () => {
+        return request(app)
+        .get('/api/articles?topic=cats&sort_by=votes&order=ASC')
+        .expect(200)
+            .then( (res) => {
+                expect(res.body.articles).toEqual(expect.any(Array))
+                expect(res.body.articles).toBeSortedBy('votes', {ascending: true})
+                res.body.articles.forEach( (article) => {
+                    expect(article).toMatchObject({
+                    author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: 'cats',
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+        })
+    
+    
+    test('should sort by a topic, and order ascending', () => {
+        return request(app)
+        .get('/api/articles?topic=cats&sort_by=votes&order=ASC')
+        .expect(200)
+            .then( (res) => {
+                expect(res.body.articles).toEqual(expect.any(Array))
+                expect(res.body.articles).toBeSortedBy('votes', {ascending: true})
+                res.body.articles.forEach( (article) => {
+                    expect(article).toMatchObject({
+                    author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: 'cats',
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+        })
+    
+        test('should be safe from SQL injections', () => {
+            return request(app)
+            .get('/api/articles?sort_by=votes&order=ASC;something_bad')
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        })
+
+        test('should return error message when given invalid sort_by', () => {
+            return request(app)
+            .get('/api/articles?sort_by=voteZzz')
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        })
+
+        test('should return error message when given invalid order', () => {
+            return request(app)
+            .get('/api/articles?sort_by=votes&order=ascnddd')
+            .expect(400)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Invalid input syntax')
+            })
+        })
+
+        test('should return [] given invalid topic', () => {
+            return request(app)
+            .get('/api/articles?topic=somethingBad')
+            .expect(404)
+            .then( (res) => {
+                expect(res.body.msg).toBe('Article does not exist')
+            })
+        })
+
+});

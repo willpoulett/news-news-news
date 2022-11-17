@@ -1,7 +1,7 @@
 
 const db = require("./db/connection");
   
-exports.articleIsReal = async (article_id) => {
+exports.articleIsReal = (article_id) => {
     return db
       .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
       .then((queryOutput) => {
@@ -11,7 +11,7 @@ exports.articleIsReal = async (article_id) => {
       });
   };
 
-exports.userExists = async (username) => {
+exports.userExists = (username) => {
     return db
       .query(`SELECT * FROM users WHERE username = $1`, [username])
       .then((queryOutput) => {
@@ -20,3 +20,5 @@ exports.userExists = async (username) => {
         }
       });
   };
+
+ 
