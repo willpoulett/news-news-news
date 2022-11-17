@@ -160,7 +160,6 @@ exports.removeComment = (commentId) => {
       [commentId]
     )
     .then((result) => {
-      console.log(result.rows)
       return result.rows[0];
     });
   })
