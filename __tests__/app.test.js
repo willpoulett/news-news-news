@@ -522,3 +522,28 @@ describe('/api/comments/comment_id', () => {
         })
     })
 });
+
+describe('/api', () => {
+    test('GET 200 - returns an object of endpoints ', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then( (result) => {
+            expect(Object.keys(result.body.endPoints)).toEqual(
+                [
+                    'GET /api',
+                    'GET /api/topics',
+                    'GET /api/articles',
+                    'GET api/users',
+                    'GET /api/articles/article_id',
+                    'GET /api/articles/article_id/comments',
+                    'POST /api/articles/article_id/comments',
+                    'PATCH /api/articles/article_id',
+                    'DELETE /api/comments/comment_id'
+                  ]
+            )
+
+              })
+        })
+    });
+

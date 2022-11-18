@@ -1,4 +1,5 @@
-const {fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, insertComment, changeArticleById, fetchUsers, removeComment} = require('../models/news_site.js')
+const {fetchTopics, fetchArticles, fetchArticleById, fetchCommentsByArticleId, insertComment, changeArticleById, fetchUsers, removeComment, findAPI} = require('../models/news_site.js')
+const endPoints = require('../endpoints.json')
 
 exports.getTopics = (req, res, next) => {
     fetchTopics()
@@ -77,3 +78,10 @@ exports.deleteComment = (req,res,next) => {
         next(err)
       })
 }
+
+exports.getAPI = (req,res,next) => {
+    res.send({endPoints: endPoints})
+    res.status(200)
+    
+
+    }
