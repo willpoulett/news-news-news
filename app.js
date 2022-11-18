@@ -19,7 +19,7 @@ app.delete('/api/comments/:comment_id', deleteComment)
 
 app.get('/api/seed', (req,res) => {
   const seed = require('./db/seeds/seed.js')
-  const data = require('./db/data/development-data')
+  const data = require('./db/data/development-data/index.js')
   seed(data).then(()=>{
     res.send({msg: 'Hi! Welcome to my server!'})
   })
