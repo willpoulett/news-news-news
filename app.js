@@ -1,7 +1,6 @@
 const express = require("express")
 const {getTopics, getArticles, getArticleById, getCommentsByArticleId, postComment, patchArticleById, getUsers, deleteComment, getAPI} = require('./controllers/news_site.js')
 const app = express()
-const seed = require('./db/seeds/run-seed.js')
 
 app.use(express.json());
 
