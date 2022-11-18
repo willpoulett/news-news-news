@@ -17,8 +17,9 @@ app.patch('/api/articles/:articleId', patchArticleById)//
 
 app.delete('/api/comments/:comment_id', deleteComment)
 
-app.get('/api/seed', () => {
+app.get('/api/seed', (req,res) => {
   const seed = require('./db/seeds/seed.js')
+  res.send({msg: 'Hi! Welcome to my server!'})
 })
 
 app.use((err,req,res,next) => {
