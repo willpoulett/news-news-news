@@ -1,6 +1,7 @@
 const express = require("express")
 const {getTopics, getArticles, getArticleById, getCommentsByArticleId, postComment, patchArticleById, getUsers, deleteComment, getAPI} = require('./controllers/news_site.js')
 const app = express()
+const seed = require('./db/seeds/run-seed.js')
 
 app.use(express.json());
 
@@ -16,6 +17,10 @@ app.post('/api/articles/:articleId/comments', postComment)//
 app.patch('/api/articles/:articleId', patchArticleById)//
 
 app.delete('/api/comments/:comment_id', deleteComment)
+
+app.get('/api/seed', (req,res) => {
+  return seed
+})
 
 app.use((err,req,res,next) => {
     if (err.status === 404){
