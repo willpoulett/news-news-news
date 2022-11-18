@@ -18,8 +18,8 @@ app.patch('/api/articles/:articleId', patchArticleById)//
 
 app.delete('/api/comments/:comment_id', deleteComment)
 
-app.get('/api/seed', (req,res) => {
-  return seed
+app.get('/api/seed', () => {
+  const seed = require('./db/seeds/seed.js')
 })
 
 app.use((err,req,res,next) => {

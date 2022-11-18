@@ -508,7 +508,6 @@ describe('/api/comments/comment_id', () => {
         .delete('/api/comments/jibberish')
         .expect(400)
         .then( (result) => {
-            console.log(result.body)
             expect(result.body.msg).toBe('Invalid input syntax')
         })
     })
@@ -517,7 +516,6 @@ describe('/api/comments/comment_id', () => {
         .delete('/api/comments/1234')
         .expect(404)
         .then( (result) => {
-            console.log(result.text)
             expect(result.body.msg).toBe("That comment does not exist")
         })
     })
