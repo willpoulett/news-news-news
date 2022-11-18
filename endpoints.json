@@ -23,5 +23,90 @@
         }
       ]
     }
+  },
+  "GET api/users" : {
+    "description" : "returns an array of all users",
+    "queries" : [],
+    "exampleResponse" : {
+      "users" : {
+        "username": "butter_bridge",
+        "name" : "jonny",
+        "avatar_url" : "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
+    }
+  },
+  "GET /api/articles/article_id": {
+    "description": "returns a particular article",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "article": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341,
+          "votes" : 12,
+          "comment_count" : 123,
+          "article_id" : 12
+        }
+      ]
+    }
+  },
+  "GET /api/articles/article_id/comments": {
+    "description": "returns comments from a particular article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+        "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        "votes": 14,
+        "author": "butter_bridge",
+        "article_id": 1,
+        "created_at": 1604113380000
+        }
+      ]
+    }
+  },
+  "POST /api/articles/article_id/comments": {
+    "description": "posts a comment for a particular article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+        "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        "votes": 0,
+        "author": "butter_bridge",
+        "article_id": 1,
+        "created_at": 1604113380000
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/article_id": {
+    "description": "changes a particular article",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341,
+          "votes" : 12,
+          "comment_count" : 123,
+          "article_id" : 12
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/comment_id": {
+    "description": "deletes a particular comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment": []
+    }
   }
 }
+

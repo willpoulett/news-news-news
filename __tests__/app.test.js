@@ -95,7 +95,8 @@ describe('/api/articles/:article_Id', () => {
                     author: 'butter_bridge',
                     body: 'I find this existence challenging',
                     created_at: '2020-07-09T20:11:00.000Z',
-                    votes: 100
+                    votes: 100,
+                    comment_count: 11
                 })
             })
         });
@@ -495,3 +496,54 @@ describe('/api/articles', () => {
         })
 
 });
+
+describe('/api/comments/comment_id', () => {
+    test('DELETE 204: responds with empty response body', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    });
+    test('DELETE 400: Responds with error message when wrong data type', () => {
+        return request(app)
+        .delete('/api/comments/jibberish')
+        .expect(400)
+        .then( (result) => {
+            console.log(result.body)
+            expect(result.body.msg).toBe('Invalid input syntax')
+        })
+    })
+    test('DELETE 404: Responds with error message when non existant ID', () => {
+        return request(app)
+        .delete('/api/comments/1234')
+        .expect(404)
+        .then( (result) => {
+            console.log(result.text)
+            expect(result.body.msg).toBe("That comment does not exist")
+        })
+    })
+});
+
+describe('/api', () => {
+    test('GET 200 - returns an object of endpoints ', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then( (result) => {
+            expect(Object.keys(result.body.endPoints)).toEqual(
+                [
+                    'GET /api',
+                    'GET /api/topics',
+                    'GET /api/articles',
+                    'GET api/users',
+                    'GET /api/articles/article_id',
+                    'GET /api/articles/article_id/comments',
+                    'POST /api/articles/article_id/comments',
+                    'PATCH /api/articles/article_id',
+                    'DELETE /api/comments/comment_id'
+                  ]
+            )
+
+              })
+        })
+    });
+

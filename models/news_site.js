@@ -1,5 +1,5 @@
 const db = require('../db/connection.js');
-const {articleIsReal, userExists, topicExists} = require('../utility-funtions.js')
+const {articleIsReal, userExists, commentExists} = require('../utility-funtions.js')
 
 exports.fetchTopics = () => {
     return db.query(`
@@ -58,7 +58,25 @@ exports.fetchArticles = (sort_by = 'created_at', order = 'DESC', topic) => {
 
 exports.fetchArticleById = (article_id) => {
   return db
-      .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+      .query(`SELECT
+      articles.article_id,
+      articles.title,
+      articles.topic,
+      articles.author,
+      articles.body,
+      articles.created_at,
+      articles.votes,
+      COUNT(comments.article_id)::INT AS comment_count
+      FROM articles 
+      JOIN comments
+      ON comments.article_id = articles.article_id
+      WHERE articles.article_id = $1
+      GROUP By articles.author,
+      articles.title,
+      articles.article_id,
+      articles.topic,
+      articles.created_at,
+      articles.votes;`, [article_id])
       .then((result) => {
         if (result.rows.length === 0){
           return Promise.reject({status:404,msg:'That article does not exist'})
@@ -130,3 +148,20 @@ exports.fetchUsers= () => {
     return res.rows;
     });
 }
+
+exports.removeComment = (commentId) => {
+  return commentExists(commentId).then( () => {
+    return db
+    .query(
+      `
+    DELETE FROM comments
+    WHERE comment_id = $1;
+    `,
+      [commentId]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+  })
+  
+};
